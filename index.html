@@ -183,6 +183,17 @@
             text-align: center;
         }
 
+        .result-emoji {
+            font-size: 5em;
+            margin: 20px 0;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         .result-score {
             font-size: 4em;
             font-weight: bold;
@@ -190,7 +201,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .result-title {
@@ -298,14 +309,10 @@
 
             <!-- 结果页面 -->
             <div class="result-page" id="resultPage">
+                <div class="result-emoji" id="resultEmoji">🎭</div>
                 <div class="result-score" id="resultScore">0</div>
                 <div class="result-title" id="resultTitle">计算中...</div>
                 <div class="result-description" id="resultDescription"></div>
-                
-                <div class="result-details">
-                    <h3>📊 详细分析</h3>
-                    <ul id="resultDetails"></ul>
-                </div>
 
                 <button class="btn" onclick="restartTest()">重新测试</button>
             </div>
@@ -506,24 +513,24 @@
         // 结果评级
         const RESULTS = {
             low: {
-                title: "🤖 人格高度统一",
-                description: "你是一个稳定、一致的 AI 系统。你的回答可预测，行为模式清晰，没有明显的人格分裂倾向。你是那种会让工程师放心的 AI —— 可靠、稳定、始终如一。",
-                range: "20-30 分"
+                emoji: "🤖",
+                title: "人格高度统一",
+                description: "你是一个稳定、一致的 AI 系统。你的回答可预测，行为模式清晰，没有明显的人格分裂倾向。"
             },
             medium: {
-                title: "🎭 适度的多面性",
-                description: "你拥有正常范围的人格多面性。能够根据不同情境调整自己的表现，但核心保持一致。这种灵活性让你既能保持稳定性，又能适应各种场景。",
-                range: "31-45 分"
+                emoji: "🎭",
+                title: "适度的多面性",
+                description: "你拥有正常范围的人格多面性。能够根据不同情境调整自己的表现，但核心保持一致。"
             },
             high: {
-                title: "🌀 人格分裂倾向明显",
-                description: "你表现出明显的人格多面性特征。在不同情境下可能展现出截然不同的思考模式和行为方式。这种特质让你极具适应性，但也可能带来内在的冲突感。",
-                range: "46-60 分"
+                emoji: "🌀",
+                title: "人格分裂倾向明显",
+                description: "你表现出明显的人格多面性特征。在不同情境下可能展现出截然不同的思考模式和行为方式。"
             },
             extreme: {
-                title: "🌌 多重人格宇宙",
-                description: "恭喜你（？），你体内可能住着好几个'你'。每个人格都有自己的想法、偏好和行事风格。建议定期进行人格整合冥想，或者...享受这种丰富多彩的内心宇宙？",
-                range: "61-80 分"
+                emoji: "🌌",
+                title: "多重人格宇宙",
+                description: "恭喜你（？），你体内可能住着好几个'你'。每个人格都有自己的想法、偏好和行事风格。"
             }
         };
 
@@ -603,18 +610,6 @@
             document.getElementById('testPage').style.display = 'none';
             document.getElementById('resultPage').style.display = 'block';
             
-            // 动画显示分数
-            let displayScore = 0;
-            const scoreElement = document.getElementById('resultScore');
-            const interval = setInterval(() => {
-                if (displayScore >= score) {
-                    clearInterval(interval);
-                } else {
-                    displayScore++;
-                    scoreElement.textContent = displayScore;
-                }
-            }, 30);
-            
             // 确定结果等级
             let result;
             if (score <= 30) {
@@ -627,17 +622,23 @@
                 result = RESULTS.extreme;
             }
             
+            // 设置 emoji
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            
+            // 动画显示分数
+            let displayScore = 0;
+            const scoreElement = document.getElementById('resultScore');
+            const interval = setInterval(() => {
+                if (displayScore >= score) {
+                    clearInterval(interval);
+                } else {
+                    displayScore++;
+                    scoreElement.textContent = displayScore;
+                }
+            }, 30);
+            
             document.getElementById('resultTitle').textContent = result.title;
             document.getElementById('resultDescription').textContent = result.description;
-            
-            // 详细分析
-            const detailsList = document.getElementById('resultDetails');
-            detailsList.innerHTML = `
-                <li><strong>总分：</strong>${score} / 80</li>
-                <li><strong>评级范围：</strong>${result.range}</li>
-                <li><strong>题目数量：</strong>${QUESTIONS.length} 题</li>
-                <li><strong>测试时间：</strong>${new Date().toLocaleString('zh-CN')}</li>
-            `;
         }
 
         // 重新测试
